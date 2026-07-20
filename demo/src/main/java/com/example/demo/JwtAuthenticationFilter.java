@@ -48,8 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     // Save the user in the context
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
-                else
-                    throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"invalid token");
+
             } catch (Exception e) {
                 // Silently ignore invalid/expired tokens here.
                 // Spring Security will automatically block the request before it reaches the controller.

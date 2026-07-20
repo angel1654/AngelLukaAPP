@@ -1,15 +1,13 @@
 package com.example.demo;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 @RestController
 public class TaskController {
@@ -20,10 +18,14 @@ public class TaskController {
     }
 
     @GetMapping("/api/{username}/tasks")
-    public Task getTask()
+    public List<Task> getTask()
+    {
+        return taskService.getTasks();
+    }
+    @PostMapping("/api/{username}/createTask")
+    public ResponseEntity<Task> createTask(@RequestBody Task task)
     {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        return taskService.getTasks();
-
+        return taskService.createTask(task.getTaskTitle(),task.getTaskDescription());
     }
 }

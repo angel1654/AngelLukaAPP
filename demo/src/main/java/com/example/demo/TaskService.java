@@ -1,5 +1,7 @@
 package com.example.demo;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -21,11 +23,18 @@ public class TaskService {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
-    public Task getTasks()
+    public List<Task> getTasks()
     {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(username);
-        return new Task();
+        return user.getTasks();
+    }
 
+    public ResponseEntity<Task> createTask(String taskTitle, String taskDescription)
+    {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username);
+        Task task = new Task(taskTitle,taskDescription,"in_progress", user);
+        return new ResponseEntity<>(taskRepository.save(task), HttpStatus.CREATED);
     }
 }

@@ -1,5 +1,8 @@
 package com.example.demo;
 
+import com.example.demo.CustomExceptions.UserAlreadyExistsException;
+import com.example.demo.CustomExceptions.WrongCredentialsException;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -28,16 +31,25 @@ public class UserService {
     {
         if(userRepository.existsByUsername(username))
         {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"user with that username already exists!!!");
+            throw new UserAlreadyExistsException("username already exists!");
         }
         User user = new User(username, passwordEncoder.encode(password));
         return userRepository.save(user);
-
     }
 
     public ResponseEntity<Map<String,String>> userLogin(String username, String password)
     {
+        if(username.isBlank())
+        {
+            throw new WrongCredentialsException("you must enter a username");
+        }
+        else if(password.isBlank())
+        {
+            throw new WrongCredentialsException("you must enter a password");
+        }
         User user = userRepository.findByUsername(username);
+        if(user==null)
+            throw new WrongCredentialsException("wrong username or password!");
         boolean isMatch = passwordEncoder.matches(password, user.getPassword());
         if(isMatch)
         {
@@ -45,6 +57,6 @@ public class UserService {
             response.put("token",jwtUtil.generateToken(username));
             return ResponseEntity.ok(response);
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND,"the username or password you entered is wrong");
+        throw new WrongCredentialsException("wrong username or password!");
     }
 }
