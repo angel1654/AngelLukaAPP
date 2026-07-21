@@ -1,5 +1,7 @@
 package com.example.demo;
 
+import com.example.demo.CustomExceptions.BlankTaskDescriptionException;
+import com.example.demo.CustomExceptions.BlankTaskTitleException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,6 +34,14 @@ public class TaskService {
 
     public ResponseEntity<Task> createTask(String taskTitle, String taskDescription)
     {
+        if(taskTitle.isBlank())
+        {
+            throw new BlankTaskTitleException("You must enter a name for the task!");
+        }
+        else if(taskDescription.isBlank())
+        {
+            throw new BlankTaskDescriptionException("You must enter a task description!");
+        }
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(username);
         Task task = new Task(taskTitle,taskDescription,"in_progress", user);

@@ -27,4 +27,18 @@ public class GlobalExceptionHandler {
         ErrorPayload payload = new ErrorPayload("WRONG_CREDENTIALS", wc.getMessage());
         return new ResponseEntity<>(payload,HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(BlankTaskTitleException.class)
+    public ResponseEntity<ErrorPayload> handleBlankTaskTitle(BlankTaskTitleException btt)
+    {
+        ErrorPayload payload = new ErrorPayload("BLANK_TASK_TITLE", btt.getMessage());
+        return new ResponseEntity<>(payload,HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(BlankTaskDescriptionException.class)
+    public ResponseEntity<ErrorPayload> handleBlankTaskDescription(BlankTaskDescriptionException btd)
+    {
+        ErrorPayload payload =  new ErrorPayload("BLANK_TASK_DESCRIPTION",btd.getMessage());
+        return new ResponseEntity<>(payload,HttpStatus.CONFLICT);
+    }
 }
